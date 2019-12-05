@@ -31,24 +31,33 @@ let leftTableData = [{
 }];
 
 let selectedLeftRows = [];
-let rightTableRows = [];
+let rightTableData = [];
 let selectedRightRows = [];
 
-let leftTable = document.getElementById("leftTable");
-for (var s = 0; s < leftTableData.length; s++) {
-    let row = leftTable.insertRow(s + 1);
-    let cells = Object.keys(leftTableData[s]);
-    for (var c = 0; c < cells.length; c++) {
-       if(c == 0) {
-         let cell = row.insertCell(c);
-         cell.innerHTML = `<input type='checkbox' id=${s} onclick='checkUncheckLeftRows(this)' />`;
-       } else {
-         let cell = row.insertCell(c);
-         cell.innerHTML = leftTableData[s][cells[c]];
-       }
+//loading left data table
+function loadLeftTableData() {
+    let leftTable = document.getElementById("leftTable");
+    for (var l = 0; l < leftTableData.length; l++) {
+        let row = leftTable.insertRow(l + 1);
+        let cells = Object.keys(leftTableData[l]);
+        for (var c = 0; c < cells.length; c++) {
+            if(c == 0) {
+                let cell = row.insertCell(c);
+                cell.innerHTML = `<input type='checkbox' id=${l} onclick='checkUncheckLeftRows(this)' />`;
+            } else {
+                let cell = row.insertCell(c);
+                cell.innerHTML = leftTableData[l][cells[c]];
+            }
+        }
     }
 }
 
+loadLeftTableData();
+
+/* 
+If left side table's root checkbox is checked/unchecked, correspondingly all rows
+of left side table's will be checked/unchecked.
+*/
 function checkUncheckLeftTable(event) {
     let rows = document.getElementById('leftTable').rows;
     selectedLeftRows = [];
@@ -60,6 +69,10 @@ function checkUncheckLeftTable(event) {
     }
 }
 
+/* 
+If one of the rows are checked/unchecked in left side table, respective rows id
+will be pushed/removed to/from array.
+*/
 function checkUncheckLeftRows(event) {
     let id = parseInt(event.id) + 1;
     let checkAll = document.getElementById('checkAllLeft');
@@ -82,26 +95,27 @@ function checkUncheckLeftRows(event) {
     }
 }
 
-function filterRows() {
+/* 
+Pulling only selected rows from left side table and storing
+it in sepearte array. Then, unchecking all the selected rows. 
+*/
+function addSelectedRows() {
     selectedLeftRows.forEach((id) => {
         let stud = leftTableData.find(s => s.id === id);
-        rightTableRows.push(stud);
+        rightTableData.push(stud);
     });
-    addRowsToRight(rightTableRows);
-}
-
-function uncheckLeftTable() {
     let checkAll = document.getElementById('checkAllLeft');
     checkAll.checked = false;
     let rows = document.getElementById('leftTable').rows;
     for (var i = 1; i < rows.length; i++) {
         rows[i].getElementsByTagName("input")[0].checked = false;
-        
     }
+    addRowsToRight(rightTableData);
 }
 
+
+//Adding all the selected rows from left side table to right side table
 function addRowsToRight(arr) {
-    uncheckLeftTable();
     let rightTable = document.getElementById("rightTable");
     for (var s = 0; s < arr.length; s++) {
         let row = rightTable.insertRow(s + 1);
@@ -118,6 +132,10 @@ function addRowsToRight(arr) {
     }
 }
 
+/* 
+If right side table's root checkbox is checked/unchecked, correspondingly all rows
+of right side table's will be checked/unchecked.
+*/
 function checkUncheckRightTable(event) {
     let rows = document.getElementById('rightTable').rows;
     selectedRightRows = [];
@@ -129,6 +147,10 @@ function checkUncheckRightTable(event) {
     }
 }
 
+/* 
+If one of the rows are checked/unchecked in right side table, respective rows id
+will be pushed/removed to/from array.
+*/
 function checkUncheckRightRows(event) {
     let id = parseInt(event.id) + 1;
     let checkAll = document.getElementById('checkAllRight');
@@ -151,6 +173,11 @@ function checkUncheckRightRows(event) {
     }
 }
 
+/*
+Deleting all the rows from right side table, then from the list of 
+existing right side rows removing the selected rows. Later adding remaining rows 
+back to the table.
+*/
 function deleteRowsFromRight() {
     let table = document.getElementById('rightTable');
     let rowsLength = table.rows.length;
@@ -158,13 +185,13 @@ function deleteRowsFromRight() {
         table.deleteRow(i)
     }
     selectedRightRows.forEach(id => {
-        rightTableRows.forEach((stud, i) => {
+        rightTableData.forEach((stud, i) => {
             if(stud.id == id) {
-                rightTableRows.splice(i, 1);
+                rightTableData.splice(i, 1);
             }
         })
     });
     let checkAll = document.getElementById('checkAllRight');
     checkAll.checked = false;
-    addRowsToRight(rightTableRows);
+    addRowsToRight(rightTableData);
 }
