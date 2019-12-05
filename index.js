@@ -59,7 +59,7 @@ function checkUncheckLeftTable(event) {
 }
 
 function checkUncheckLeftRows(event) {
-    let id = parseInt(event.id);
+    let id = parseInt(event.id) + 1;
     let checkAll = document.getElementById('checkAllLeft');
     checkAll.checked = true;
     if(event.checked) {
@@ -81,5 +81,23 @@ function checkUncheckLeftRows(event) {
 }
 
 function addRowsToRight() {
-    console.log(selectedLeftRows)
+    let rightTableRows = [];
+    selectedLeftRows.forEach((id) => {
+        let stud = studentsArr.find(s => s.id === id);
+        rightTableRows.push(stud);
+    });
+    let rightTable = document.getElementById("rightTable");
+    for (var s = 0; s < rightTableRows.length; s++) {
+        let row = rightTable.insertRow(s + 1);
+        let cells = Object.keys(rightTableRows[s]);
+        for (var c = 0; c < cells.length; c++) {
+           if(c == 0) {
+             let cell = row.insertCell(c);
+             cell.innerHTML = `<input type='checkbox' id=${s} onclick='checkUncheckLeftRows(this)' />`;
+           } else {
+             let cell = row.insertCell(c);
+             cell.innerHTML = rightTableRows[s][cells[c]];
+           }
+        }
+    }
 }
