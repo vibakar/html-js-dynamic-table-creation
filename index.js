@@ -151,7 +151,8 @@ function checkUncheckRightTable(event) {
     selectedRightRows = [];
     for (var i = 1; i < rows.length; i++) {
         if(event.checked) {
-            selectedRightRows.push(i);
+            let id = rows[i].getElementsByTagName("input")[0].id;
+            selectedRightRows.push(id);
         }
         rows[i].getElementsByTagName("input")[0].checked = event.checked;
     }
@@ -189,6 +190,7 @@ existing right side rows removing the selected rows. Later adding remaining rows
 back to the table.
 */
 function deleteRowsFromRight() {
+    console.log(selectedRightRows)
     let table = document.getElementById('rightTable');
     let rowsLength = table.rows.length;
     for (var i = rowsLength -1; i > 0; i--) {
@@ -203,5 +205,6 @@ function deleteRowsFromRight() {
     });
     let checkAll = document.getElementById('checkAllRight');
     checkAll.checked = false;
+    selectedRightRows = [];
     addRowsToRight(rightTableData);
 }
