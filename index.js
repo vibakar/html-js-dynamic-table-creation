@@ -80,8 +80,9 @@ function checkUncheckLeftRows(event) {
     }
 }
 
+let rightTableRows = [];
+
 function addRowsToRight() {
-    let rightTableRows = [];
     selectedLeftRows.forEach((id) => {
         let stud = studentsArr.find(s => s.id === id);
         rightTableRows.push(stud);
@@ -93,11 +94,57 @@ function addRowsToRight() {
         for (var c = 0; c < cells.length; c++) {
            if(c == 0) {
              let cell = row.insertCell(c);
-             cell.innerHTML = `<input type='checkbox' id=${s} onclick='checkUncheckLeftRows(this)' />`;
+             cell.innerHTML = `<input type='checkbox' id=${s} onclick='checkUncheckRightRows(this)' />`;
            } else {
              let cell = row.insertCell(c);
              cell.innerHTML = rightTableRows[s][cells[c]];
            }
         }
     }
+}
+
+let selectedRightRows = [];
+
+function checkUncheckRightTable(event) {
+    let rows = document.getElementById('rightTable').rows;
+    selectedRightRows = [];
+    for (var i = 1; i < rows.length; i++) {
+        if(event.checked) {
+            selectedRightRows.push(i);
+        }
+        rows[i].getElementsByTagName("input")[0].checked = event.checked;
+    }
+}
+
+function checkUncheckRightRows(event) {
+    let id = parseInt(event.id) + 1;
+    let checkAll = document.getElementById('checkAllRight');
+    checkAll.checked = true;
+    if(event.checked) {
+        if(selectedRightRows.indexOf(id) == -1)
+            selectedRightRows.push(id);
+    } else {
+        if(selectedRightRows.indexOf(id) >= 0){
+            let index = selectedRightRows.indexOf(id);
+            selectedRightRows.splice(index, 1);
+        }
+    }
+    let rows = document.getElementById('rightTable').rows;
+    for (var i = 1; i < rows.length; i++) {
+        if(!rows[i].getElementsByTagName("input")[0].checked) {
+            checkAll.checked = false;
+            break;
+        }
+    }
+}
+
+function deleteRowsFromRight() {
+    console.log(selectedRightRows)
+    selectedRightRows.forEach(id => {
+        rightTableRows.forEach((s, i) => {
+            if(id == s.id) {
+                rightTableRows.splice(i, 1)
+            }
+        })
+    });
 }
