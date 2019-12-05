@@ -110,12 +110,22 @@ function addSelectedRows() {
     for (var i = 1; i < rows.length; i++) {
         rows[i].getElementsByTagName("input")[0].checked = false;
     }
-    addRowsToRight(rightTableData);
+    if(selectedLeftRows.length > 0)
+        addRowsToRight(rightTableData);
 }
 
-
-//Adding all the selected rows from left side table to right side table
+/*
+Adding all the selected rows from left side table to right side table. And
+before adding, deleting the existing rows from right side table and re-adding it again
+to avoid duplicate entry.
+*/
 function addRowsToRight(arr) {
+    let table = document.getElementById('rightTable');
+    let rowsLength = table.rows.length;
+    for (var i = rowsLength -1; i > 0; i--) {
+        table.deleteRow(i)
+    }
+    selectedLeftRows = [];    
     let rightTable = document.getElementById("rightTable");
     for (var s = 0; s < arr.length; s++) {
         let row = rightTable.insertRow(s + 1);
@@ -123,7 +133,7 @@ function addRowsToRight(arr) {
         for (var c = 0; c < cells.length; c++) {
            if(c == 0) {
              let cell = row.insertCell(c);
-             cell.innerHTML = `<input type='checkbox' id=${s} onclick='checkUncheckRightRows(this)' />`;
+             cell.innerHTML = `<input type='checkbox' id=${arr[s].id} onclick='checkUncheckRightRows(this)' />`;
            } else {
              let cell = row.insertCell(c);
              cell.innerHTML = arr[s][cells[c]];
@@ -152,7 +162,7 @@ If one of the rows are checked/unchecked in right side table, respective rows id
 will be pushed/removed to/from array.
 */
 function checkUncheckRightRows(event) {
-    let id = parseInt(event.id) + 1;
+    let id = parseInt(event.id);
     let checkAll = document.getElementById('checkAllRight');
     checkAll.checked = true;
     if(event.checked) {
