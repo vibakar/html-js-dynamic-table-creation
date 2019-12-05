@@ -1,4 +1,4 @@
-let studentsArr = [{
+let leftTableData = [{
     id: 1,
     name: 'abc',
     age: 5,
@@ -30,22 +30,24 @@ let studentsArr = [{
     city: 'CBE'
 }];
 
+let selectedLeftRows = [];
+let rightTableRows = [];
+let selectedRightRows = [];
+
 let leftTable = document.getElementById("leftTable");
-for (var s = 0; s < studentsArr.length; s++) {
+for (var s = 0; s < leftTableData.length; s++) {
     let row = leftTable.insertRow(s + 1);
-    let cells = Object.keys(studentsArr[s]);
+    let cells = Object.keys(leftTableData[s]);
     for (var c = 0; c < cells.length; c++) {
        if(c == 0) {
          let cell = row.insertCell(c);
          cell.innerHTML = `<input type='checkbox' id=${s} onclick='checkUncheckLeftRows(this)' />`;
        } else {
          let cell = row.insertCell(c);
-         cell.innerHTML = studentsArr[s][cells[c]];
+         cell.innerHTML = leftTableData[s][cells[c]];
        }
     }
 }
-
-let selectedLeftRows = [];
 
 function checkUncheckLeftTable(event) {
     let rows = document.getElementById('leftTable').rows;
@@ -80,30 +82,41 @@ function checkUncheckLeftRows(event) {
     }
 }
 
-let rightTableRows = [];
-
-function addRowsToRight() {
+function filterRows() {
     selectedLeftRows.forEach((id) => {
-        let stud = studentsArr.find(s => s.id === id);
+        let stud = leftTableData.find(s => s.id === id);
         rightTableRows.push(stud);
     });
+    addRowsToRight(rightTableRows);
+}
+
+function uncheckLeftTable() {
+    let checkAll = document.getElementById('checkAllLeft');
+    checkAll.checked = false;
+    let rows = document.getElementById('leftTable').rows;
+    for (var i = 1; i < rows.length; i++) {
+        rows[i].getElementsByTagName("input")[0].checked = false;
+        
+    }
+}
+
+function addRowsToRight(arr) {
+    uncheckLeftTable();
     let rightTable = document.getElementById("rightTable");
-    for (var s = 0; s < rightTableRows.length; s++) {
+    for (var s = 0; s < arr.length; s++) {
         let row = rightTable.insertRow(s + 1);
-        let cells = Object.keys(rightTableRows[s]);
+        let cells = Object.keys(arr[s]);
         for (var c = 0; c < cells.length; c++) {
            if(c == 0) {
              let cell = row.insertCell(c);
              cell.innerHTML = `<input type='checkbox' id=${s} onclick='checkUncheckRightRows(this)' />`;
            } else {
              let cell = row.insertCell(c);
-             cell.innerHTML = rightTableRows[s][cells[c]];
+             cell.innerHTML = arr[s][cells[c]];
            }
         }
     }
 }
-
-let selectedRightRows = [];
 
 function checkUncheckRightTable(event) {
     let rows = document.getElementById('rightTable').rows;
@@ -139,12 +152,19 @@ function checkUncheckRightRows(event) {
 }
 
 function deleteRowsFromRight() {
-    console.log(selectedRightRows)
+    let table = document.getElementById('rightTable');
+    let rowsLength = table.rows.length;
+    for (var i = rowsLength -1; i > 0; i--) {
+        table.deleteRow(i)
+    }
     selectedRightRows.forEach(id => {
-        rightTableRows.forEach((s, i) => {
-            if(id == s.id) {
-                rightTableRows.splice(i, 1)
+        rightTableRows.forEach((stud, i) => {
+            if(stud.id == id) {
+                rightTableRows.splice(i, 1);
             }
         })
     });
+    let checkAll = document.getElementById('checkAllRight');
+    checkAll.checked = false;
+    addRowsToRight(rightTableRows);
 }
